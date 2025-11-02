@@ -73,13 +73,15 @@ def evaluate_candidate(params_vector: np.ndarray,
 
 
 def files_for_index(i: int, sorted_files: List[Path], num_segs_per_eval: int) -> List[Path]:
-    """Selects a slice of data files for one evaluation."""
-    start = (num_segs_per_eval * i) % len(sorted_files)
-    end = start + num_segs_per_eval
-    if end <= len(sorted_files):
-        return sorted_files[start:end]
-    else:
-        return sorted_files[start:] + sorted_files[:(end % len(sorted_files))]
+    return sorted_files[:num_segs_per_eval]
+    ### This was stupid, dont change the metric dummy ###
+    # """Selects a slice of data files for one evaluation."""
+    # start = (num_segs_per_eval * i) % len(sorted_files)
+    # end = start + num_segs_per_eval
+    # if end <= len(sorted_files):
+    #     return sorted_files[start:end]
+    # else:
+    #     return sorted_files[start:] + sorted_files[:(end % len(sorted_files))]
 
 
 def sample_offspring(N: int, lambda_: int, rng, xmean, sigma, B, D):
@@ -102,7 +104,7 @@ def CMA_ES(controller_module,
            population_factor: float = 3.0,
            max_evals: Optional[int] = None,
            stopfitness: float = 50,
-           num_segs_per_eval: int = 10,
+           num_segs_per_eval: int = 20,
            verbose: bool = True,
            seed: int = 42,
            log_path: str = "cma_log.csv") -> Tuple[np.ndarray, Dict]:
@@ -116,7 +118,7 @@ def CMA_ES(controller_module,
     sigma = 0.3
 
     # CMA-ES strategy parameters
-    lambda_ = 4 + int(np.floor(population_factor * np.log(N))) + 5
+    lambda_ = 4 + int(np.floor(population_factor * np.log(N)))
     mu = lambda_ // 2
     weights = np.log(mu + 0.5) - np.log(np.arange(1, mu + 1))
     weights = weights / np.sum(weights)
@@ -232,7 +234,7 @@ def CMA_ES(controller_module,
             if verbose:
                 print(f"Gen {gen:3d}  Eval {counteval:6d}  Best {best_fitness:.6e}  Mean {mean_fitness:.6e}")
 
-            if best_fitness <= stopfitness:
+            if mean_fitness <= stopfitness:
                 if verbose:
                     print("Stopping: reached target fitness")
                 break

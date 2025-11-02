@@ -6,6 +6,7 @@ class Controller(BaseController):
   A basic PID + FF controller
   """
   def __init__(self, params=[0.195, 0.100, -0.053, 0.210]):
+    params = [0.1274712696507233, 0.12337218260952829, 0.015426298824837252, 0.13241204858670386]
     self.p = params[0]
     self.i = params[1]
     self.d = params[2]
@@ -29,6 +30,6 @@ class Controller(BaseController):
     self.alpha = self.ff
     for i in range(len(future_plan.lataccel)):
       self.FF += self.alpha * future_plan.lataccel[i]
-      self.alpha /= 5
+      self.alpha /= 2
 
     return self.p * error + self.i * self.error_integral + self.d * error_diff + self.FF
