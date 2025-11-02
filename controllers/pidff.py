@@ -5,11 +5,11 @@ class Controller(BaseController):
   """
   A basic PID + FF controller
   """
-  def __init__(self,):
-    self.p = 0.195
-    self.i = 0.100
-    self.d = -0.053
-    self.ff = 0.210
+  def __init__(self, params=[0.195, 0.100, -0.053, 0.210]):
+    self.p = params[0]
+    self.i = params[1]
+    self.d = params[2]
+    self.ff = params[3]
     self.error_integral = 0
     self.prev_error = 0
     self.once = True

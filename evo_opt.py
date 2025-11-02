@@ -102,7 +102,7 @@ def CMA_ES(controller_module,
            population_factor: float = 3.0,
            max_evals: Optional[int] = None,
            stopfitness: float = 50,
-           num_segs_per_eval: int = 5,
+           num_segs_per_eval: int = 10,
            verbose: bool = True,
            seed: int = 42,
            log_path: str = "cma_log.csv") -> Tuple[np.ndarray, Dict]:
@@ -116,7 +116,7 @@ def CMA_ES(controller_module,
     sigma = 0.3
 
     # CMA-ES strategy parameters
-    lambda_ = 4 + int(np.floor(population_factor * np.log(N))) + 10
+    lambda_ = 4 + int(np.floor(population_factor * np.log(N))) + 5
     mu = lambda_ // 2
     weights = np.log(mu + 0.5) - np.log(np.arange(1, mu + 1))
     weights = weights / np.sum(weights)
@@ -254,9 +254,12 @@ def CMA_ES(controller_module,
 
 # === Entrypoint ===
 if __name__ == "__main__":
-    CONTROLLER = "pid2"
+    CONTROLLER = "pidff"
     controller_module = importlib.import_module(f'controllers.{CONTROLLER}')
-    P0 = [0.37367301440636197, 0.18557052557463957, -0.0792914668252033, 0.06331065057335294, 0.26538137215511515, 0.2686367100203415, 0.0991006278077006, -0.20556991574148054]
+    # Initial parameters for pid2
+    # P0 = [0.37367301440636197, 0.18557052557463957, -0.0792914668252033, 0.06331065057335294, 0.26538137215511515, 0.2686367100203415, 0.0991006278077006, -0.20556991574148054]
+    # Initial parameters for pidff
+    P0 = [0.195, 0.100, -0.053, 0.210]
 
     best_params, hist = CMA_ES(controller_module, P0,
                                model_path="./models/tinyphysics.onnx",
