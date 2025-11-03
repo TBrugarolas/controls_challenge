@@ -68,7 +68,7 @@ def evaluate_candidate(params_vector: np.ndarray,
 def sample_offspring(N: int, lambda_: int, rng, xmean, sigma):
     """Generates lambda offspring w/ gaussian noise around current weighted mean."""
     z = rng.standard_normal((N, lambda_))
-    arx = xmean[:, None] + sigma * z
+    arx = xmean + sigma * z
     return arx
 
 
