@@ -9,6 +9,7 @@ import seaborn as sns
 import signal
 import urllib.request
 import zipfile
+import time
 
 from io import BytesIO
 from collections import namedtuple
@@ -83,7 +84,7 @@ def evolve(controller_module,
            num_segs_per_eval: int = 20,
            verbose: bool = True,
            seed: int = 42,
-           log_path: str = "myopt_log_pid2_trial1.csv",
+           log_path: str = f"myopt_log_{time.ctime()}.csv",
            max_evals: int = 100000):
     rng = np.random.default_rng(seed)
     xmean = np.asarray(params0, dtype=float).reshape(-1, 1)
@@ -177,15 +178,20 @@ def evolve(controller_module,
 
 # === Entrypoint ===
 if __name__ == "__main__":
-    CONTROLLER = "pid2"
+    CONTROLLER = "pid1"
     controller_module = importlib.import_module(f'controllers.{CONTROLLER}')
 
     # Initial parameters for pid2
-    P0 = [0.37367301440636197, 0.18557052557463957, -0.0792914668252033, 0.06331065057335294,
-          0.26538137215511515, 0.2686367100203415, 0.0991006278077006, -0.20556991574148054]
+    # P0 = [0.37367301440636197, 0.18557052557463957, -0.0792914668252033, 0.06331065057335294,
+    #       0.26538137215511515, 0.2686367100203415, 0.0991006278077006, -0.20556991574148054]
+    # Inital parameters for pid1
+    P0 = [0.195, 0.1, -0.053, 0]
 
     best_params = evolve(controller_module, P0,
                          model_path="./models/tinyphysics.onnx",
                          data_dir="./data",
+                         carry_over=4,
+                         pop_size=20,
+                         log_path=f"myopt_log_{CONTROLLER}_trial{1}.csv",
                          verbose=True)
     print("Found best params:", best_params)

@@ -256,11 +256,13 @@ def CMA_ES(controller_module,
 
 # === Entrypoint ===
 if __name__ == "__main__":
-    CONTROLLER = "pid2"
+    CONTROLLER = "pid1"
     controller_module = importlib.import_module(f'controllers.{CONTROLLER}')
+    # Initial parameters for pid1
+    P0 = [0.195, 0.1, -0.053, 0.0]
     # Initial parameters for pid2
-    P0 = [0.7121565271743499, 0.2932924501687073, -0.1988950353056675, -0.05609751334901771, 
-          0.3216861364031248, 0.6786277013487406, 0.3329273203505607, -0.24491526925201154]
+    # P0 = [0.7121565271743499, 0.2932924501687073, -0.1988950353056675, -0.05609751334901771, 
+    #       0.3216861364031248, 0.6786277013487406, 0.3329273203505607, -0.24491526925201154]
     # Initial parameters for pidff
     # P0 = [0.195, 0.100, -0.053, 0.210]
 
@@ -268,5 +270,6 @@ if __name__ == "__main__":
                                model_path="./models/tinyphysics.onnx",
                                data_dir="./data",
                                population_factor=3.0,
+                               log_path=f"cma_log_{CONTROLLER}_trial{1}.csv",
                                verbose=True)
     print("Found best params:", best_params)

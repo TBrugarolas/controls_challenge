@@ -7,7 +7,7 @@ from collections import namedtuple
 State = namedtuple('State', ['roll_lataccel', 'v_ego', 'a_ego'])
 FuturePlan = namedtuple('FuturePlan', ['lataccel', 'roll_lataccel', 'v_ego', 'a_ego'])
 CONTEXT_LENGTH = 20
-MAX_DELTA_U = 0.05
+MAX_DELTA_U = 0.01
 DEL_T = 0.1
 TAU = 0.3
 
@@ -16,8 +16,8 @@ class Controller(BaseController):
   An LQR controller
   """
   def __init__(self):
-    self.Q = np.diag([1, 1, 5000, 1])
-    self.R = np.array([[100]])
+    self.Q = np.diag([1, 1, 10, 1])
+    self.R = np.array([[1]])
     self.model = TinyPhysicsModel("models/tinyphysics.onnx", debug=False)
 
     self.state_history = []
@@ -105,7 +105,7 @@ class Controller(BaseController):
       v_ego_seq = [v_ego]
       a_ego_seq = [a_ego]      
 
-    r = np.vstack([v_ego_seq, a_ego_seq, target_lataccel_seq, roll_lataccel_seq]).T
+    r = np.vstack([v_ego_seq[0], a_ego_seq[0], target_lataccel_seq[0], roll_lataccel_seq[0]]).T
     N = len(r)
 
     # --- Initialize histories if first call ---
@@ -132,8 +132,7 @@ class Controller(BaseController):
 
     # Apply only the first control input and record it
     u_out = np.clip(float(u_list[0]),
-                self.action_history[-1] - MAX_DELTA_U,
-                self.action_history[-1] + MAX_DELTA_U)
-
+            self.action_history[-1] - MAX_DELTA_U,
+            self.action_history[-1] + MAX_DELTA_U)
     self.action_history.append(u_out)
     return u_out
