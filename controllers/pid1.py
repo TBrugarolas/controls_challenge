@@ -3,7 +3,7 @@ import numpy as np
 
 class Controller(BaseController):
   """
-  A simple optimized PID controller
+  A simple tunable PID controller for optimization
   """
   def __init__(self, params=[0.195, 0.1, -0.053, 0]):
     self.p = params[0]
